@@ -5,6 +5,7 @@
 #   MEM = current memory in use percentage
 #   HD = current percentage of hard drive in use
 
+
 # debug mode - to turn on, set to 1 (run script manually to see debug outputs)
 DEBUG=0
 
@@ -17,6 +18,7 @@ CPU=$(cat <(grep 'cpu ' /proc/stat) <(sleep 1 && grep 'cpu ' /proc/stat) | awk -
 [ $DEBUG -eq 1 ] && echo "DEBUG: cpu -> "$CPU
 CPULOAD=$(uptime | tr -s " " | cut -d' ' -f9-)
 [ $DEBUG -eq 1 ] && echo "DEBUG: cpu load -> "$CPULOAD
+#TOPCPU=$(ps aux -A c --no-headers | awk '{print $3 " "  $11}' | sort -rn | head -n 5)
 TOPCPU=$(ps aux | awk '{arr[$11]+=$3}; END {for (i in arr) {printf "% 6.1f%% %s\n", arr[i],i}}' | sort -k1nr | head -n 5)
 
 # get memory info
@@ -29,6 +31,7 @@ MEMUSAGE=$(free | grep Mem | awk '{printf("%02d",  $3/$2 * 100.0)}')
 MEMUSAGE2=$(echo "$MEMTOT GB in use")
 [ $DEBUG -eq 1 ] && echo "DEBUG: mem usage tooltip -> "$MEMUSAGE2
 MEMUSED=$(echo "scale=2;($MEMTOT - $MEMAVA)" | bc)
+#TOPMEM=$(ps aux -A c --no-headers | awk '{print $4 " "  $11}' | sort -rn | head -n 5)
 TOPMEM=$(ps aux | awk '{arr[$11]+=$4}; END {for (i in arr) {printf "% 6.1f%% %s\n", arr[i],i}}' | sort -k1nr | head -n 5)
 
 # get hard drive usage info 
